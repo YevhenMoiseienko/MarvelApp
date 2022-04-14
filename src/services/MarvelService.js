@@ -26,13 +26,15 @@ class MarvelService {
 
     _transferCharacter = (char) => {
         return {
+            id: char.id,
             name: char.name,
             thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
             description: char.description ?
                 `${char.description.split('').length > 210 ? char.description.slice(0, 210) + '...' : char.description}` :
                 "This character don't have description",
             homepage: char.urls[0].url,
-            wiki: char.urls[1].url
+            wiki: char.urls[1].url,
+            comics: char.comics.items
         }
     }
 }

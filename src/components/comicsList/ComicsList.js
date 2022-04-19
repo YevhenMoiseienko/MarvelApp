@@ -1,4 +1,5 @@
 import {useState, useEffect} from "react";
+import uuid from 'react-uuid'
 import useMarvelService from "../../services/MarvelService";
 
 import Spinner from "../spinner/Spinner";
@@ -57,9 +58,9 @@ const ComicsList = () => {
 const View = ({comics}) => {
 
     const list = comics.map(item => {
-        const {id, thumbnail, title, price} = item
+        const {thumbnail, title, price} = item
         return (
-            <li key={id} className="comics__item">
+            <li key={uuid()} className="comics__item">
                 <a href="#">
                     <img src={thumbnail} alt={title} className="comics__item-img"/>
                     <div className="comics__item-name">{title}</div>

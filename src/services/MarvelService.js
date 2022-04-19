@@ -1,31 +1,29 @@
+import {useHttp} from "../hooks/http.hook";
 
-class MarvelService {
+const useMarvelService = () => {
 
-    _apiKey = 'apikey=46b7fa70a37536dbd1bc2d6e3cf4b36f';
-    _apiBase = 'https://gateway.marvel.com:443/v1/public/';
-    _baseOffset = 210;
+    const {request, error, loading, clearError} = useHttp();
 
-    getResources  = async (url) => {
-        const res = await fetch(url)
+    const _apiKey = 'apikey=46b7fa70a37536dbd1bc2d6e3cf4b36f';
+    const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
+    const _baseOffset = 210;
 
-        if (!res.ok) {
-            throw new Error(`This ${url} can't be reached, status ${res.status}`)
-        }
-
-        return await res.json();
+    const getAllCharacters = async (offset = _baseOffset) => {
+        const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
+        return res.data.results.map(_transferCharacter)
     }
 
-    getAllCharacters = async (offset = this._baseOffset) => {
-        const res = await this.getResources(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`);
-        return res.data.results.map(this._transferCharacter)
+    const getCharacter = async (id) => {
+        const res = await request(`${_apiBase}characters/${id}?${_apiKey}`);
+        return _transferCharacter(res.data.results[0])
     }
 
-    getCharacter = async (id) => {
-        const res = await this.getResources(`${this._apiBase}characters/${id}?${this._apiKey}`);
-        return this._transferCharacter(res.data.results[0])
+    const getAllComics = async (offset = _baseOffset) => {
+        const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`);
+        return res.data.results.map(_transferComics)
     }
 
-    _transferCharacter = (char) => {
+    const _transferCharacter = (char) => {
         return {
             id: char.id,
             name: char.name,
@@ -38,6 +36,17 @@ class MarvelService {
             comics: char.comics.items
         }
     }
+
+    const _transferComics = (comic) => {
+        return {
+            id: comic.id,
+            thumbnail: comic.thumbnail.path + '.' + comic.thumbnail.extension,
+            title: comic.title,
+            price: comic.prices[0].price ? comic.prices[0].price : "Not available"
+        }
+    }
+
+    return {getCharacter, getAllCharacters, getAllComics, error, loading, clearError}
 }
 
-export default MarvelService;
+export default useMarvelService;

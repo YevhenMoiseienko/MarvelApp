@@ -18,6 +18,11 @@ const useMarvelService = () => {
         return _transferCharacter(res.data.results[0])
     }
 
+    const getComic = async (id) => {
+        const res = await request(`${_apiBase}comics/${id}?${_apiKey}`);
+        return _transferComics(res.data.results[0])
+    }
+
     const getAllComics = async (offset = _baseOffset) => {
         const res = await request(`${_apiBase}comics?limit=8&offset=${offset}&${_apiKey}`);
         return res.data.results.map(_transferComics)
@@ -42,11 +47,16 @@ const useMarvelService = () => {
             id: comic.id,
             thumbnail: comic.thumbnail.path + '.' + comic.thumbnail.extension,
             title: comic.title,
-            price: comic.prices[0].price ? comic.prices[0].price : "Not available"
+            price: comic.prices[0].price ? `${comic.prices[0].price}$` : "Not available",
+            description: comic.description ?
+                `${comic.description.split('').length > 210 ? comic.description.slice(0, 210) + '...' : comic.description}` :
+                "This character don't have description",
+            pages: comic.pageCount? `${comic.pageCount} pages` : "No information about the number of pages",
+            language: comic.textObjects.language || 'en-us'
         }
     }
 
-    return {getCharacter, getAllCharacters, getAllComics, error, loading, clearError}
+    return {getCharacter, getAllCharacters, getAllComics, getComic, error, loading, clearError}
 }
 
 export default useMarvelService;

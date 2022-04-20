@@ -8,7 +8,7 @@ import decoration from "../../resources/img/vision.png";
 
 
 
-const Main = () => {
+const MainPage = () => {
 
     const [selectedChar, setChar] = useState(null)
 
@@ -34,4 +34,4 @@ const Main = () => {
     )
 }
 
-export default Main;
+export default MainPage;

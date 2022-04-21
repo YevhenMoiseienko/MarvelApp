@@ -1,4 +1,5 @@
 import {useState, useEffect, useRef} from "react";
+import {CSSTransition, TransitionGroup} from "react-transition-group";
 import PropTypes from 'prop-types';
 
 import './charList.scss';
@@ -55,28 +56,38 @@ const CharList = ({onCharSelected}) => {
                 {objectFit: 'contain'} :
                 {objectFit: 'cover'};
             return (
-                <li className="char__item"
-                    tabIndex={0}
-                    ref={el => itemRefs.current[i] = el}
-                    key={id}
-                    onClick={() => {
-                        onCharSelected(id);
-                        focusOnItem(i)
-                    }}
-                    onKeyPress={(e) => {
-                        if (e.key === ' ' || e.key === 'Enter') {
-                            onCharSelected(id);
-                            focusOnItem(i)
-                        }
-                    }}>
-                    <img src={thumbnail} alt={name} style={objectFit}/>
-                    <div className="char__name">{name}</div>
-                </li>
+              <CSSTransition
+                  key={id}
+                  timeout={500}
+                  classNames="char__item"
+                    mountOnEnter
+                    unmountOnExit>
+                  <li className="char__item"
+                      tabIndex={0}
+                      ref={el => itemRefs.current[i] = el}
+                      onClick={() => {
+                          onCharSelected(id);
+                          focusOnItem(i)
+                      }}
+                      onKeyPress={(e) => {
+                          if (e.key === ' ' || e.key === 'Enter') {
+                              onCharSelected(id);
+                              focusOnItem(i)
+                          }
+                      }}>
+                      <img src={thumbnail} alt={name} style={objectFit}/>
+                      <div className="char__name">{name}</div>
+                  </li>
+              </CSSTransition>
             )
         })
          return (
              <ul className="char__grid">
-                 {list}
+                 {
+                     <TransitionGroup component={null}>
+                         {list}
+                     </TransitionGroup>
+                 }
              </ul>
          )
     }

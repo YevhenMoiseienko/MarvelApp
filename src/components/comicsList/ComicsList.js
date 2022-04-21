@@ -1,6 +1,6 @@
 import {useState, useEffect} from "react";
 import {Link} from "react-router-dom";
-import uuid from 'react-uuid'
+import {CSSTransition, TransitionGroup} from "react-transition-group";
 import useMarvelService from "../../services/MarvelService";
 
 import Spinner from "../spinner/Spinner";
@@ -57,22 +57,28 @@ const ComicsList = () => {
 }
 
 const View = ({comics}) => {
-
-    const list = comics.map(item => {
+    //In this list I used (i) like a "key", because Marvel API sometimes return the same id
+    const list = comics.map((item, i) => {
         const {thumbnail, title, price, id} = item
         return (
-            <li key={uuid()} className="comics__item">
-                <Link to={`/comics/${id}`}>
-                    <img src={thumbnail} alt={title} className="comics__item-img"/>
-                    <div className="comics__item-name">{title}</div>
-                    <div className="comics__item-price">{price}</div>
-                </Link>
-            </li>
+            <CSSTransition key={i} timeout={500} classNames="comics__item">
+                <li className="comics__item">
+                    <Link to={`/comics/${id}`}>
+                        <img src={thumbnail} alt={title} className="comics__item-img"/>
+                        <div className="comics__item-name">{title}</div>
+                        <div className="comics__item-price">{price}</div>
+                    </Link>
+                </li>
+            </CSSTransition>
         )
     })
     return (
         <ul className="comics__grid">
-            {list}
+            {
+                <TransitionGroup component={null}>
+                    {list}
+                </TransitionGroup>
+            }
         </ul>
     )
 }

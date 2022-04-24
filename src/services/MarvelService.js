@@ -8,6 +8,11 @@ const useMarvelService = () => {
     const _apiBase = 'https://gateway.marvel.com:443/v1/public/';
     const _baseOffset = 210;
 
+    const getCharacterByName = async (name) => {
+        const res = await request(`${_apiBase}characters?name=${name}&${_apiKey}`);
+        return res.data.results.map(_transferCharacter)
+    }
+
     const getAllCharacters = async (offset = _baseOffset) => {
         const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`);
         return res.data.results.map(_transferCharacter)
@@ -56,7 +61,7 @@ const useMarvelService = () => {
         }
     }
 
-    return {getCharacter, getAllCharacters, getAllComics, getComic, error, loading, clearError}
+    return {getCharacter, getAllCharacters, getAllComics, getComic, getCharacterByName, error, loading, clearError}
 }
 
 export default useMarvelService;
